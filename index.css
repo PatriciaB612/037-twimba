@@ -83,7 +83,49 @@ button {
   margin: 15px 0;
 }
 
+.ellipsis-icon-tweet {
+  float: right;
+  visibility: hidden;
+}
+
+.tweet:hover {
+  .ellipsis-icon-tweet {
+    visibility: visible;
+  }
+}
+
+.delete-btn {
+  position: absolute;
+  top: 20px;
+  left: 245px;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.75rem;
+  box-shadow: 0px 0px 3px 0px #999;
+  border-radius: 8px;
+  padding: 0.5em;
+  background-color: #fff;
+  visibility: hidden;
+  cursor: pointer;
+}
+
+.delete-btn p {
+  margin: 0;
+}
+
+.delete-btn:hover {
+  background-color: #e4e7ed;
+}
+
+.delete-reply-btn {
+  top: 40px;
+  left: 195px;
+  z-index: 2;
+}
+
 .tweet-inner {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -102,6 +144,7 @@ button {
 }
 
 .tweet-reply {
+  position: relative;
   border-top: 1px solid lightgray;
   padding: 20px 0 0 0px;
   margin: 10px 0 10px 40px;
@@ -147,5 +190,5 @@ button {
 }
 
 .visible {
-  display: block;
+  visibility: visible;
 }

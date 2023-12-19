@@ -1,5 +1,7 @@
 import { tweetsData as initialTweetsData } from './data.js'
 import { v4 as uuidv4 } from 'https://jspm.dev/uuid'
+const userHandle = '@Patricia00'
+const userProfilePic = `images/patricia.jpg`
 
 let tweetsData = []
 
@@ -19,6 +21,10 @@ document.addEventListener('click', function (e) {
     handleRetweetClick(e.target.dataset.retweet)
   } else if (e.target.dataset.reply) {
     handleReplyClick(e.target.dataset.reply)
+  } else if (e.target.dataset.ellipsis) {
+    handleEllipsisClick(e.target.dataset.ellipsis)
+  } else if (e.target.dataset.delete) {
+    handleDeleteClick(e.target.dataset.delete)
   }
 })
 
@@ -33,8 +39,8 @@ function handleTweetBtn() {
 
   if (tweetInput.value) {
     tweetsData.unshift({
-      handle: `@Patricia00`,
-      profilePic: `images/patricia.jpg`,
+      handle: userHandle,
+      profilePic: userProfilePic,
       likes: 0,
       retweets: 0,
       tweetText: tweetInput.value,
@@ -92,8 +98,8 @@ function handleNewReply(replyId, textInput) {
 
   if (textInput.value) {
     targetTweetObj.replies.push({
-      handle: `@Patricia`,
-      profilePic: `images/patricia.jpg`,
+      handle: userHandle,
+      profilePic: userProfilePic,
       tweetText: textInput.value,
     })
   }
@@ -102,11 +108,34 @@ function handleNewReply(replyId, textInput) {
   toggleReplyView(replyId)
 }
 
+function handleEllipsisClick(tweetId) {
+  document.getElementById(`delete-btn-${tweetId}`).classList.toggle('visible')
+}
+
+function handleDeleteClick(tweetId) {
+  const filteredTweetsData = tweetsData.filter(function (tweet) {
+    return tweet.uuid !== tweetId
+  })
+  tweetsData = filteredTweetsData
+  storeTweetsInLocalStorage()
+  render()
+}
+
 function getFeedHtml() {
   let feedHtml = ''
   tweetsData.forEach(function (tweet) {
     const likedIconClass = tweet.isLiked ? 'liked' : ''
     const retweetedIconClass = tweet.isRetweeted ? 'retweeted' : ''
+
+    let deleteTweetHtml = ''
+
+    if (tweet.handle === userHandle) {
+      deleteTweetHtml = `<i class="fa-solid fa-ellipsis-vertical                   ellipsis-icon-tweet"  data-ellipsis="${tweet.uuid}"></i>
+                          <span class="delete-btn" id="delete-btn-${tweet.uuid}" data-delete="${tweet.uuid}">
+                          <i class="fa-solid fa-trash-can"></i>
+                          Delete
+                          </span>`
+    }
 
     let repliesHtml = ''
 
@@ -126,7 +155,7 @@ function getFeedHtml() {
 
     feedHtml += `
     <div class="tweet">
-        <div class="tweet-inner">
+        <div class="tweet-inner">    
             <img src="${tweet.profilePic}" class="profile-pic">
             <div>
                 <p class="handle">${tweet.handle}</p>
@@ -148,15 +177,16 @@ function getFeedHtml() {
                         ${tweet.retweets}
                     </span>
                 </div>   
-            </div>            
+            </div>
+            ${deleteTweetHtml}    
         </div>
         <div class="hidden" id="replies-${tweet.uuid}">
           ${repliesHtml}
           <div class="tweet-reply" id='reply-box'>
-            <div class="tweet-inner">
-              <img src="images/patricia.jpg" class="profile-pic">
+            <div class="tweet-inner">     
+              <img src="${userProfilePic}" class="profile-pic">
                 <div>
-                    <p class="handle">@Patricia00</p>
+                    <p class="handle">${userHandle}</p>
                     <textarea id="new-reply-input" data-new-reply="${tweet.uuid}" placeholder="Tweet your reply"></textarea>
                 </div>
             </div>   
