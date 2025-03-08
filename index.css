@@ -153,12 +153,13 @@ button {
   word-break: normal;
 }
 
-.tweet-reply textarea {
+.tweet-reply input {
   height: 15px;
   padding: 8px;
   font-size: 14px;
   line-height: 15px;
   border-radius: 12px;
+  border: none;
   background-color: #edfbff;
 }
 

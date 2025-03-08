@@ -1,5 +1,6 @@
 import { tweetsData as initialTweetsData } from './data.js'
 import { v4 as uuidv4 } from 'https://jspm.dev/uuid'
+
 const userHandle = '@Patricia00'
 const userProfilePic = `images/patricia.jpg`
 
@@ -187,7 +188,7 @@ function getFeedHtml() {
               <img src="${userProfilePic}" class="profile-pic">
                 <div>
                     <p class="handle">${userHandle}</p>
-                    <textarea id="new-reply-input" data-new-reply="${tweet.uuid}" placeholder="Tweet your reply"></textarea>
+                    <input id="new-reply-input" data-new-reply="${tweet.uuid}" placeholder="Tweet your reply"></input>
                 </div>
             </div>   
           </div>    
