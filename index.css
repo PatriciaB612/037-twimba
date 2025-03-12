@@ -83,8 +83,14 @@ button {
   margin: 15px 0;
 }
 
+.tweet-inner {
+  position: relative;
+}
+
 .ellipsis-icon-tweet {
-  float: right;
+  position: absolute;
+  top: 0%;
+  right: 0%;
   visibility: hidden;
 }
 
@@ -97,7 +103,7 @@ button {
 .delete-btn {
   position: absolute;
   top: 20px;
-  left: 245px;
+  right: -28px;
   display: flex;
   align-items: center;
   gap: 0.5em;
@@ -116,12 +122,6 @@ button {
 
 .delete-btn:hover {
   background-color: #e4e7ed;
-}
-
-.delete-reply-btn {
-  top: 40px;
-  left: 195px;
-  z-index: 2;
 }
 
 .tweet-inner {

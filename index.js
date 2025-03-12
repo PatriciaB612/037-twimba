@@ -1,7 +1,7 @@
 import { tweetsData as initialTweetsData } from './data.js'
 import { v4 as uuidv4 } from 'https://jspm.dev/uuid'
 
-const userHandle = '@Patricia00'
+const userHandle = '@Patricia00🌸'
 const userProfilePic = `images/patricia.jpg`
 
 let tweetsData = []
@@ -25,7 +25,7 @@ document.addEventListener('click', function (e) {
   } else if (e.target.dataset.ellipsis) {
     handleEllipsisClick(e.target.dataset.ellipsis)
   } else if (e.target.dataset.delete) {
-    handleDeleteClick(e.target.dataset.delete)
+    handleDeleteClick(e.target.dataset.delete, tweetsData)
   }
 })
 
@@ -102,6 +102,7 @@ function handleNewReply(replyId, textInput) {
       handle: userHandle,
       profilePic: userProfilePic,
       tweetText: textInput.value,
+      uuid: uuidv4(),
     })
   }
   storeTweetsInLocalStorage()
@@ -113,11 +114,14 @@ function handleEllipsisClick(tweetId) {
   document.getElementById(`delete-btn-${tweetId}`).classList.toggle('visible')
 }
 
-function handleDeleteClick(tweetId) {
-  const filteredTweetsData = tweetsData.filter(function (tweet) {
-    return tweet.uuid !== tweetId
+function handleDeleteClick(Id, arr) {
+  arr.forEach(function (item, index) {
+    if (item.uuid === Id) {
+      arr.splice(index, 1)
+    } else if (item.replies && item.replies.length > 0) {
+      handleDeleteClick(Id, item.replies)
+    }
   })
-  tweetsData = filteredTweetsData
   storeTweetsInLocalStorage()
   render()
 }
@@ -128,28 +132,37 @@ function getFeedHtml() {
     const likedIconClass = tweet.isLiked ? 'liked' : ''
     const retweetedIconClass = tweet.isRetweeted ? 'retweeted' : ''
 
-    let deleteTweetHtml = ''
-
-    if (tweet.handle === userHandle) {
-      deleteTweetHtml = `<i class="fa-solid fa-ellipsis-vertical                   ellipsis-icon-tweet"  data-ellipsis="${tweet.uuid}"></i>
+    const deleteBtnHtml = `<i class="fa-solid fa-ellipsis-vertical                   ellipsis-icon-tweet"  data-ellipsis="${tweet.uuid}"></i>
                           <span class="delete-btn" id="delete-btn-${tweet.uuid}" data-delete="${tweet.uuid}">
                           <i class="fa-solid fa-trash-can"></i>
                           Delete
                           </span>`
-    }
 
     let repliesHtml = ''
 
     if (tweet.replies.length > 0) {
-      tweet.replies.forEach(function (tweet) {
+      tweet.replies.forEach(function (reply) {
+        const deleteReplyBtnHtml = `<i class="fa-solid fa-ellipsis-vertical                   ellipsis-icon-tweet"  data-ellipsis="${reply.uuid}"></i>
+                          <span class="delete-btn" id="delete-btn-${reply.uuid}" data-delete="${reply.uuid}">
+                          <i class="fa-solid fa-trash-can"></i>
+                          Delete
+                          </span>`
+
         repliesHtml += `<div class="tweet-reply">
                           <div class="tweet-inner">
-                              <img src="${tweet.profilePic}" class="profile-pic">
+                              <img src="${
+                                reply.profilePic
+                              }" class="profile-pic">
                                 <div>
-                                    <p class="handle">${tweet.handle}</p>
-                                    <p class="tweet-text">${tweet.tweetText}</p>
+                                    <p class="handle">${reply.handle}</p>
+                                    <p class="tweet-text">${reply.tweetText}</p>
                                 </div>
-                            </div>
+                            ${
+                              reply.handle === userHandle
+                                ? deleteReplyBtnHtml
+                                : ''
+                            }     
+                            </div>   
                         </div>`
       })
     }
@@ -179,7 +192,7 @@ function getFeedHtml() {
                     </span>
                 </div>   
             </div>
-            ${deleteTweetHtml}    
+            ${tweet.handle === userHandle ? deleteBtnHtml : ''}    
         </div>
         <div class="hidden" id="replies-${tweet.uuid}">
           ${repliesHtml}
@@ -188,7 +201,9 @@ function getFeedHtml() {
               <img src="${userProfilePic}" class="profile-pic">
                 <div>
                     <p class="handle">${userHandle}</p>
-                    <input id="new-reply-input" data-new-reply="${tweet.uuid}" placeholder="Tweet your reply"></input>
+                    <input id="new-reply-input" data-new-reply="${
+                      tweet.uuid
+                    }" placeholder="Tweet your reply"></input>
                 </div>
             </div>   
           </div>    
