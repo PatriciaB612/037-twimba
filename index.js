@@ -85,10 +85,6 @@ function handleRetweetClick(tweetId) {
 }
 
 function handleReplyClick(replyId) {
-  toggleReplyView(replyId)
-}
-
-function toggleReplyView(replyId) {
   document.getElementById(`replies-${replyId}`).classList.toggle('hidden')
 }
 
@@ -132,22 +128,19 @@ function getFeedHtml() {
     const likedIconClass = tweet.isLiked ? 'liked' : ''
     const retweetedIconClass = tweet.isRetweeted ? 'retweeted' : ''
 
-    const deleteBtnHtml = `<i class="fa-solid fa-ellipsis-vertical                   ellipsis-icon-tweet"  data-ellipsis="${tweet.uuid}"></i>
-                          <span class="delete-btn" id="delete-btn-${tweet.uuid}" data-delete="${tweet.uuid}">
-                          <i class="fa-solid fa-trash-can"></i>
-                          Delete
-                          </span>`
+    function deleteBtnHtml(item) {
+      return `<i class="fa-solid fa-ellipsis-vertical ellipsis-icon-tweet" 
+              data-ellipsis="${item.uuid}"></i>
+              <span class="delete-btn" id="delete-btn-${item.uuid}" data-delete="${item.uuid}">
+              <i class="fa-solid fa-trash-can"></i>
+              Delete
+              </span>`
+    }
 
     let repliesHtml = ''
 
     if (tweet.replies.length > 0) {
       tweet.replies.forEach(function (reply) {
-        const deleteReplyBtnHtml = `<i class="fa-solid fa-ellipsis-vertical                   ellipsis-icon-tweet"  data-ellipsis="${reply.uuid}"></i>
-                          <span class="delete-btn" id="delete-btn-${reply.uuid}" data-delete="${reply.uuid}">
-                          <i class="fa-solid fa-trash-can"></i>
-                          Delete
-                          </span>`
-
         repliesHtml += `<div class="tweet-reply">
                           <div class="tweet-inner">
                               <img src="${
@@ -159,7 +152,7 @@ function getFeedHtml() {
                                 </div>
                             ${
                               reply.handle === userHandle
-                                ? deleteReplyBtnHtml
+                                ? deleteBtnHtml(reply)
                                 : ''
                             }     
                             </div>   
@@ -192,7 +185,7 @@ function getFeedHtml() {
                     </span>
                 </div>   
             </div>
-            ${tweet.handle === userHandle ? deleteBtnHtml : ''}    
+            ${tweet.handle === userHandle ? deleteBtnHtml(tweet) : ''}    
         </div>
         <div class="hidden" id="replies-${tweet.uuid}">
           ${repliesHtml}
